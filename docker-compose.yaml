@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  geth:
+    image: ethereum/client-go:v1.13.10
+    ports:
+      - "30303:30303"
+      - "8545:8545"
+      - "8546:8546"
+      - "6060:6060"
+    volumes:
+      - geth_data:/root
+      - geth_config:/root/geth-config
+      - geth_jwtsecret:/root/jwtsecret:ro
+    command:
+      - --networkid=1
+      - --port=30303
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.port=8545
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --http.api=net,eth,web3,txpool,debug
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.port=8546
+      - --ws.api=net,eth,web3,txpool,debug
+      - --ws.origins=*
+      - --graphql
+      - --graphql.vhosts=*
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+  nimbus:
+    image: statusim/nimbus-eth2:amd64-v23.11.0
+    restart: unless-stopped
+    user: root
+    volumes:
+      - /ethereum-node/nimbus:/nimbus-data
+      - /ethereum-node/jwtsecret:/nimbus-data/jwtsecret:ro
+    ports:
+      - "9000:9000"
+      - "5052:5052"
+      - "8008:8008"
+    command:
+      - --data-dir=/nimbus-data
+      - --network=mainnet
+      - --enr-auto-update=false
+      - --udp-port=9000
+      - --tcp-port=9000
+      - --rest
+      - --rest-address=0.0.0.0
+      - --rest-port=5052
+      - --metrics
+      - --metrics-address=0.0.0.0
+      - --metrics-port=8008
+      - --el=http://geth:8545
+
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - geth
+
+volumes:
+  geth_data:
+  geth_config:
+  geth_jwtsecret:
