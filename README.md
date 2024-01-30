@@ -50,5 +50,9 @@
 5. Prometheus will scrape the data from both geth and nimbus endpoint, you can open prometheus dashboard at `<AWS PUBLIC IP>:9090` and see the metrics
 
 
+## Optional Task 
+1. To get this data into cloudwatch, you can put the `http://<AWS PUBLIC IP>:9090` as the data source in cloudwatch custom dashboard
+2. You can then query this by going to cloudwatch > metrics > All Metrics > Multi source query 
+
 
   
