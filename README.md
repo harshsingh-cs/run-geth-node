@@ -38,10 +38,16 @@
    - `mount /dev/nvme... /ethereum-node/geth`
    - `mount /dev/nvme... /ethereum-node/nimbus`
 
-Step 2: Running the node
+## Step 2: Running the node
 1. Clone this repo
 2. Run the following commands
    `docker-compose up -d`  (this will create the nimbus and the geth node + will run promethues)
+3. To see the logs of geth
+   `docker-compose logs -f geth`
+   `docker-compose logs -f nimbus`
+4. Attaching to the node 
+   `geth attach http://<AWS EC2 PUBLIC IP>:8545`
+5. Prometheus will scrape the data from both geth and nimbus endpoint, you can open prometheus dashboard at `<AWS PUBLIC IP>:9090` and see the metrics
 
 
 
